@@ -2,6 +2,8 @@ package handler
 
 import (
 	"fmt"
+	"os"
+	"strings"
 
 	"github.com/RitweekS/url-shortener.git/internal/dto/requests"
 	"github.com/RitweekS/url-shortener.git/internal/service"
@@ -25,6 +27,28 @@ func CreateUrlShortener(ctx *gin.Context) {
 			"message": err.Error(),
 		})
 	}
+	baseUrl := os.Getenv("BASEURL")
+	if baseUrl == "" {
+		fmt.Println("unable to generate URL")
+	}
 
-	ctx.Redirect(302, fmt.Sprintf("http://localhost:3000/%s", shortUrl))
+	ctx.JSON(200, gin.H{
+		"message": fmt.Sprintf("%s/%s", baseUrl, shortUrl),
+	})
+}
+
+func GetRedirectUrl(ctx *gin.Context) {
+	params := ctx.Param("param")
+	shortStr := strings.Replace(params, "/", "", 1)
+
+	redirect, err := service.GetRedirectUrl(shortStr)
+
+	if err != nil {
+		ctx.JSON(200, gin.H{
+			"message": err.Error(),
+		})
+	}
+
+	ctx.Redirect(302, redirect)
+
 }

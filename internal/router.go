@@ -6,8 +6,6 @@ import (
 )
 
 func InitializeRoutes(router *gin.Engine) {
-	api := router.Group("/v1")
-	{
-		api.POST("/short", handler.CreateUrlShortener)
-	}
+	router.POST("/short", handler.CreateUrlShortener)
+	router.GET("/:param", handler.GetRedirectUrl)
 }

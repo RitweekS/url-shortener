@@ -6,7 +6,6 @@ import (
 
 	"github.com/RitweekS/url-shortener.git/internal"
 	"github.com/RitweekS/url-shortener.git/internal/database"
-	"github.com/RitweekS/url-shortener.git/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -26,10 +25,10 @@ func main() {
 	if err != nil {
 		fmt.Printf("Error getting DB instance: %v", err)
 	}
-	autoMigErr := db.AutoMigrate(&models.Shortener{})
-	if autoMigErr != nil {
-		fmt.Printf("Failed to migrate database schema: %v", err)
-	}
+	// autoMigErr := db.AutoMigrate(&models.Shortener{})
+	// if autoMigErr != nil {
+	// 	fmt.Printf("Failed to migrate database schema: %v", err)
+	// }
 
 	defer sqlDB.Close()
 	router := gin.Default()

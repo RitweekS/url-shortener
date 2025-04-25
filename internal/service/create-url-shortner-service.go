@@ -24,3 +24,7 @@ func CreateUrlShortener(url string) (string, error) {
 
 	return repositories.CreateUrlShortener(url, shortenerStr)
 }
+
+func GetRedirectUrl(shortStr string) (string, error) {
+	return repositories.GetRedirectUrl(shortStr)
+}
