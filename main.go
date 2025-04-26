@@ -1,8 +1,7 @@
-package handler
+package main
 
 import (
 	"fmt"
-	"net/http"
 	"os"
 
 	"github.com/RitweekS/url-shortener.git/internal"
@@ -11,38 +10,30 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var router *gin.Engine
-
-func init() {
+func main() {
 	err := godotenv.Load()
 	if err != nil {
 		fmt.Printf("Error loading .env file: %v", err)
 	}
-
 	dbURL := os.Getenv("DBURL")
 	if dbURL == "" {
 		fmt.Println("DBURL environment variable not set")
 	}
-
 	db, err := database.DBInit(dbURL)
-	if err != nil {
-		fmt.Printf("Error initializing database: %v", err)
-	}
 	database.DB = db
-
 	sqlDB, err := db.DB()
 	if err != nil {
 		fmt.Printf("Error getting DB instance: %v", err)
 	}
-	defer sqlDB.Close()
+	// autoMigErr := db.AutoMigrate(&models.Shortener{})
+	// if autoMigErr != nil {
+	// 	fmt.Printf("Failed to migrate database schema: %v", err)
+	// }
 
-	// Initialize Gin router
-	router = gin.New()
+	defer sqlDB.Close()
+	router := gin.Default()
 	router.Use(internal.CORS())
 	internal.InitializeRoutes(router)
-}
 
-// Handler is the Vercel entry point
-func Handler(w http.ResponseWriter, r *http.Request) {
-	router.ServeHTTP(w, r)
+	router.Run(":8081")
 }
